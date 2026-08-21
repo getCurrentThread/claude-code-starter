@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "defaultMode": "default"
+  },
+  "autoUpdatesChannel": "latest",
+  "autoCompactEnabled": true,
+  "attribution": {
+    "commit": "",
+    "pr": "",
+    "sessionUrl": false
+  }
+}

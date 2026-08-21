@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "defaultMode": "acceptEdits"
+  },
+  "model": "opus",
+  "autoUpdatesChannel": "latest",
+  "autoCompactEnabled": true,
+  "attribution": {
+    "commit": "",
+    "pr": "",
+    "sessionUrl": false
+  }
+}
