@@ -1,0 +1,82 @@
+#!/bin/sh
+# claude - Git Bash entry point of the claude wrapper. Installed to <config-dir>/bin by Install-ClaudeWrapper.ps1.
+# Runs the real claude.exe directly for anything that must not live in a psmux pane; otherwise hands over to
+# claude-wrapper.ps1, which starts (or re-attaches) a psmux session in this directory and runs claude inside it.
+#
+# Knobs: CLAUDE_NO_PSMUX=1 (always run claude.exe), CLAUDE_REAL_EXE=<path>, CLAUDE_WRAPPER_DRYRUN=1 (print decision),
+# CLAUDE_WRAPPER_LOG=<file>. A value of 0 / false / no / off counts as unset.
+
+here=$(cd "$(dirname "$0")" && pwd)
+
+truthy() { case "${1:-}" in ''|0|false|no|off) return 1 ;; *) return 0 ;; esac; }
+
+real="${CLAUDE_REAL_EXE:-}"
+if [ -z "$real" ] || [ ! -f "$real" ]; then
+    real=""
+    oldifs=$IFS; IFS=:
+    for d in $PATH; do
+        case "$d" in "$here"|"$here/") continue ;; esac
+        if [ -f "$d/claude.exe" ]; then real="$d/claude.exe"; break; fi
+    done
+    IFS=$oldifs
+fi
+if [ -z "$real" ] && [ -f "$HOME/.local/bin/claude.exe" ]; then real="$HOME/.local/bin/claude.exe"; fi
+
+wlog() { [ -n "${CLAUDE_WRAPPER_LOG:-}" ] && printf '%s sh  %s\n' "$(date +%H:%M:%S)" "$*" >> "$CLAUDE_WRAPPER_LOG"; return 0; }
+wlog "argv: $* | real=$real | tty0=$([ -t 0 ] && echo y || echo n) tty1=$([ -t 1 ] && echo y || echo n) tty=$(tty 2>/dev/null) TERM_PROGRAM=${TERM_PROGRAM:-} TMUX=${TMUX:-} CLAUDECODE=${CLAUDECODE:-}"
+
+passthrough() {
+    reason=$1; shift
+    wlog "PASSTHROUGH ($reason)"
+    if truthy "${CLAUDE_WRAPPER_DRYRUN:-}"; then echo "PASSTHROUGH ($reason) -> $real $*"; exit 0; fi
+    if [ -z "$real" ]; then echo "claude wrapper: the real claude.exe was not found on PATH." >&2; exit 127; fi
+    case "$reason" in
+        "psmux is not installed"*) echo "claude wrapper: $reason - starting claude without split panes." >&2 ;;
+    esac
+    exec "$real" "$@"
+}
+
+truthy "${CLAUDE_NO_PSMUX:-}" && passthrough "CLAUDE_NO_PSMUX is set" "$@"
+[ -n "${TMUX:-}" ] && passthrough "already inside psmux/tmux" "$@"
+[ -n "${CLAUDECODE:-}" ] && passthrough "running inside another Claude Code session" "$@"
+if ! { [ -t 0 ] && [ -t 1 ]; }; then passthrough "stdin/stdout is not a terminal" "$@"; fi
+
+# commander accepts global options before the subcommand (`claude --verbose mcp list`), so any bare word that
+# equals a subcommand name counts. Quote prompts that contain such a word.
+for a in "$@"; do
+    case "$a" in
+        -*) ;;
+        agents|attach|auth|auto-mode|doctor|gateway|import|install|logs|mcp|plugin|plugins|project|respawn|rm|sandbox|setup-token|stop|kill|ultrareview|update|upgrade|remote-control|rc)
+            passthrough "subcommand '$a'" "$@" ;;
+    esac
+done
+for a in "$@"; do
+    case "${a%%=*}" in
+        -p|--print|-h|--help|-v|-V|--version|--teammate-mode|--agent-id|--agent-name|--team-name|--bare|--output-format|--input-format|--sdk-url|--bg|--background|--tmux|--cloud|--environment)
+            passthrough "flag '${a%%=*}'" "$@" ;;
+    esac
+done
+
+command -v psmux >/dev/null 2>&1 || passthrough "psmux is not installed (winget install --id marlocarlo.psmux --exact)" "$@"
+
+# The psmux client needs a Windows console. Under Windows Terminal / conhost / VS Code the tty is /dev/consN and the
+# session attaches right here; under mintty (the window git-bash.exe opens) it is a pty, so claude-wrapper.ps1 opens
+# the session in a new Windows Terminal window instead.
+clear_env="CLAUDE_WRAPPER_NEWWINDOW"
+case "$(tty 2>/dev/null)" in
+    /dev/cons*) ;;
+    *) export CLAUDE_WRAPPER_NEWWINDOW=1 ;;
+esac
+
+# Hand the raw arguments to PowerShell untouched (no MSYS path mangling of things like "/help"). The names of the
+# variables set here are passed on so the wrapper removes them again before claude starts.
+[ -z "${MSYS_NO_PATHCONV+x}" ] && clear_env="$clear_env MSYS_NO_PATHCONV"
+[ -z "${MSYS2_ARG_CONV_EXCL+x}" ] && clear_env="$clear_env MSYS2_ARG_CONV_EXCL"
+export MSYS_NO_PATHCONV=1 MSYS2_ARG_CONV_EXCL='*' CLAUDE_WRAPPER_CLEAR_ENV="$clear_env"
+
+# PowerShell 7 passes arguments with embedded quotes to native programs intact; Windows PowerShell 5.1 re-quotes them.
+ps=powershell.exe
+command -v pwsh.exe >/dev/null 2>&1 && ps=pwsh.exe
+wrapper=$(cygpath -w "$here/claude-wrapper.ps1")
+wlog "PSMUX -> $ps -File $wrapper (NEWWINDOW=${CLAUDE_WRAPPER_NEWWINDOW:-} CLEAR_ENV=$clear_env)"
+exec "$ps" -NoProfile -ExecutionPolicy Bypass -File "$wrapper" "$@"

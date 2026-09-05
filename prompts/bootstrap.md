@@ -41,6 +41,10 @@ Gather, without changing anything:
 - Is a `statusLine` key already configured, and does the script it points at exist?
 - Windows only: is `tmux` on PATH and is it psmux? (`tmux -V` prints `tmux 3.x` then a `psmux …`
   line.) Is `pwsh` on PATH? (`pwsh -NoProfile -Command '$PSVersionTable.PSVersion'`)
+- Windows only: is the `claude` wrapper already installed? (`Test-Path "<config-dir>\bin\claude.cmd"`;
+  `Get-Command claude -All` shows `Function` in a shell where the profile loaded.) Is the folder of
+  the real `claude.exe` on the *machine* PATH? (`[Environment]::GetEnvironmentVariable('Path','Machine') -split ';' -contains (Split-Path (Get-Command claude.exe).Source)`;
+  if yes, cmd.exe will keep the real binary even with the wrapper installed.)
 - Current `teammateMode` and `env.CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS`, if present.
 - `claude --version`.
 
@@ -186,6 +190,34 @@ If the user accepts:
    `env.CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS = "1"` and `teammateMode = "tmux"`. Do not write
    anything to `settings.json` here.
 
+5. **Ask separately** whether a plain `claude` should start inside psmux from now on (so teams get
+   panes without remembering the launcher). Before asking, state exactly what the installer changes:
+   it copies `claude-wrapper.ps1`, `claude.cmd`, `claude` and `claude-team.cmd` to
+   `<config-dir>\bin` (and itself plus `Start-ClaudeTeam.ps1` to `<config-dir>\scripts`); moves the
+   bin folder to the front of the **user** PATH (the registry value keeps its type); and appends a
+   marked `function claude` block to `Documents\WindowsPowerShell\profile.ps1`,
+   `Documents\PowerShell\profile.ps1` and `~/.bashrc`, plus a line that sources `~/.bashrc` in the
+   bash login file (`~/.bash_profile`, `~/.bash_login` or `~/.profile`, whichever exists;
+   `~/.bash_profile` is created if none does). Existing files keep their encoding and line endings.
+   Everything else — `claude -p`, `claude mcp …`, `--version`, calls from inside Claude Code, piped
+   input — keeps running the real `claude.exe`. It is reversible with
+   `<config-dir>\scripts\Install-ClaudeWrapper.ps1 -Uninstall`, which also deletes the profile files
+   it created when nothing else was added to them. Default to **not** installing it.
+
+   If the user accepts, fetch these four files into `<config-dir>\scripts\` (write UTF-8; the
+   installer fixes line endings):
+
+   ```
+   https://raw.githubusercontent.com/getCurrentThread/claude-code-starter/main/scripts/claude-wrapper.ps1
+   https://raw.githubusercontent.com/getCurrentThread/claude-code-starter/main/scripts/claude.cmd
+   https://raw.githubusercontent.com/getCurrentThread/claude-code-starter/main/scripts/claude
+   https://raw.githubusercontent.com/getCurrentThread/claude-code-starter/main/scripts/Install-ClaudeWrapper.ps1
+   ```
+
+   then run `& "<config-dir>\scripts\Install-ClaudeWrapper.ps1"` and relay its output, including
+   the warning it prints when `claude.exe`'s folder is on the machine PATH (cmd.exe then keeps the
+   real binary; PowerShell and Git Bash are covered by the profile functions).
+
 Point the user at `docs/agent-teams-windows.md` for the smoke test and troubleshooting. Do not run
 the smoke test as part of this procedure.
 
@@ -246,12 +278,16 @@ Static checks only:
 - If a `hooks` entry is configured, confirm the hook command resolves (`rtk --version`).
 - If Step 4c ran, confirm `tmux -V` resolves, `teammateMode` is `"tmux"`, and
   `<config-dir>\scripts\Start-ClaudeTeam.ps1` exists.
+- If the wrapper (4c.5) was installed, confirm `<config-dir>\bin\claude-wrapper.ps1` exists and
+  that `<config-dir>\bin` is the first entry of the user PATH.
 
 Then report:
 
 - The applied profile, extras, and whether the agent-teams fragment was merged, as a short list.
 - If Step 4c ran: the launcher command, and that `claude` must be started **inside** the psmux
-  session (the launcher does this) for panes to appear.
+  session (the launcher does this) for panes to appear. If the wrapper was installed: that a plain
+  `claude` in a **new** terminal now does this, and the rollback command
+  `& "<config-dir>\scripts\Install-ClaudeWrapper.ps1" -Uninstall`.
 - The backup path.
 - **The rollback command**, spelled out for their OS:
   - Windows: `Copy-Item "<backup>" "<settings.json>" -Force`
@@ -268,5 +304,6 @@ Then report:
 | A profile fetch fails | Stop. Do not reconstruct profile contents from memory. |
 | An upstream installer fails | Report its output, continue to Step 5 without that component, and say so in the summary. |
 | `winget install` for psmux or PowerShell 7 fails, or `tmux -V` does not resolve afterwards | Report the output, do **not** mark `agent-teams.json` as accepted, continue to Step 5, and say so in the summary. |
+| `Install-ClaudeWrapper.ps1` fails part-way | Report its output and run it again with `-Uninstall` so no half-installed PATH entry or profile block remains; continue without the wrapper. |
 | The user declines the diff | Change nothing. If Step 4 already ran an installer, state exactly what it changed. |
 | No `settings.json` at all | Treat the current state as `{}`; there is nothing to back up. Say so. |

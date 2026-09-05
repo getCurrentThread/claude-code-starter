@@ -65,8 +65,11 @@ Claude가 현재 환경을 읽고, 어떤 프로필을 쓸지 묻고, 키 단위
   절차서가 [`profiles/agent-teams.json`](profiles/agent-teams.json)
   (`env.CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS`, `teammateMode`)을 병합하고 psmux 세션 안에서
   `claude`를 띄우는 [`scripts/Start-ClaudeTeam.ps1`](scripts/Start-ClaudeTeam.ps1)을 설치합니다.
-  Anthropic이 지원하지 않는 서드파티 경로이며, Claude Code 2.1.261 + psmux 3.3.8에서 확인했습니다.
-  자세한 내용과 문제 해결: [`docs/agent-teams-windows.md`](docs/agent-teams-windows.md).
+  원하면 [`scripts/Install-ClaudeWrapper.ps1`](scripts/Install-ClaudeWrapper.ps1)로 그냥 `claude`만
+  쳐도 그렇게 뜨게 할 수 있고, `claude -p`, `claude mcp …` 같은 것은 계속 원래 바이너리로 갑니다
+  (`-Uninstall`로 되돌림). Anthropic이 지원하지 않는 서드파티 경로이며, Claude Code 2.1.261 +
+  psmux 3.3.8에서 확인했습니다. 자세한 내용과 문제 해결:
+  [`docs/agent-teams-windows.md`](docs/agent-teams-windows.md).
 
 앞의 둘은 설정 병합보다 **먼저** 실행됩니다. 그래야 그들이 쓴 키가 병합 과정에서 그대로 보존됩니다.
 

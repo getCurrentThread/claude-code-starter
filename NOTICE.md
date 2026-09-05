@@ -1,8 +1,8 @@
 # Third-party components
 
 This repository ships **no third-party code**. It contains configuration fragments, a
-procedure document, and one launcher script of its own (`scripts/Start-ClaudeTeam.ps1`, MIT,
-same as the rest of this repo). The three optional components below are installed by their own
+procedure document, and a few scripts of its own under `scripts/` (the psmux launcher, the
+`claude` wrapper and its installer; MIT, same as the rest of this repo). The three optional components below are installed by their own
 official installers or by winget, straight from their upstream repositories, at the version those
 repositories publish. Nothing is vendored, mirrored, or re-hosted here.
 

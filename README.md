@@ -74,8 +74,11 @@ third-party code is vendored here.
   bootstrap merges [`profiles/agent-teams.json`](profiles/agent-teams.json)
   (`env.CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS`, `teammateMode`) and installs
   [`scripts/Start-ClaudeTeam.ps1`](scripts/Start-ClaudeTeam.ps1), which starts `claude` inside a
-  psmux session. Third-party path, not supported by Anthropic; verified with Claude Code 2.1.261 and
-  psmux 3.3.8. Details and troubleshooting: [`docs/agent-teams-windows.md`](docs/agent-teams-windows.md).
+  psmux session. Optionally, [`scripts/Install-ClaudeWrapper.ps1`](scripts/Install-ClaudeWrapper.ps1)
+  makes a plain `claude` do that by itself while `claude -p`, `claude mcp …` and friends keep
+  running the real binary (reversible with `-Uninstall`). Third-party path, not supported by
+  Anthropic; verified with Claude Code 2.1.261 and psmux 3.3.8. Details and troubleshooting:
+  [`docs/agent-teams-windows.md`](docs/agent-teams-windows.md).
 
 The first two run *before* the settings merge, so whatever they write survives it untouched.
 

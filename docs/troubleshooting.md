@@ -66,6 +66,18 @@ order, then read [agent-teams-windows.md](agent-teams-windows.md) — its troubl
 each debug-log signature to a fix. Start Claude with `--debug-file "$env:TEMP\claude_debug.log"`
 and look for `TeammateModeSnapshot` and `BackendRegistry` lines.
 
+## A plain `claude` does not start in psmux after installing the wrapper
+
+Open a **new** terminal first; the function lives in the shell profile. Then
+`CLAUDE_WRAPPER_DRYRUN=1 claude` (PowerShell: `$env:CLAUDE_WRAPPER_DRYRUN=1; claude`) prints which
+path the wrapper would take and why. `Get-Command claude` in PowerShell should say `Function`; if it
+says `Application`, the profile did not load — check `Get-ExecutionPolicy` (`Restricted` blocks
+profiles; `Set-ExecutionPolicy -Scope CurrentUser RemoteSigned` fixes it). In cmd.exe the wrapper
+only wins when `claude.exe`'s folder is not on the machine PATH; the installer says so when it is.
+If the session opens and closes at once, `claude.exe` exited immediately: an unquoted prompt that
+contains a subcommand word (`claude explain the mcp setup` runs `claude mcp`) is the usual cause;
+quote the prompt. Remove everything with `<config-dir>\scripts\Install-ClaudeWrapper.ps1 -Uninstall`.
+
 ## An extras key stopped working after an update
 
 Expected. Extras are undocumented `/config`-managed keys and can change between versions. Remove the
