@@ -51,27 +51,16 @@ Claude가 현재 환경을 읽고, 어떤 프로필을 쓸지 묻고, 키 단위
 
 ## 선택 구성 요소
 
-셋 다 선택 사항이고, 각자의 공식 인스톨러나 패키지 관리자가 설치합니다. 이 레포에 복사해 둔 남의
-코드는 없습니다.
+둘 다 선택 사항이고, 둘 다 각자의 공식 인스톨러가 설치합니다. 이 레포에 복사해 둔 남의 코드는
+없습니다.
 
 - **[CC-statusline](https://github.com/AwesomeJun/CC-statusline)** (MIT) — 컨텍스트 사용량, 비용,
   추론 강도를 보여주는 상태줄. `statusLine` 키를 담당합니다.
 - **[RTK](https://github.com/rtk-ai/rtk)** (Apache-2.0) — 셸 출력이 컨텍스트에 들어오기 전에 압축하는
   `PreToolUse` 훅. `hooks` 키를 담당합니다. `rtk init -g`는 전역 `CLAUDE.md`에 `@RTK.md` import 줄도
   추가하는데, 절차서가 실행 전에 이 사실을 알려줍니다.
-- **[psmux](https://github.com/psmux/psmux)** (MIT) — Windows 전용. Rust로 만든 tmux 호환
-  멀티플렉서라 WSL 없이 에이전트 팀의 팀원 하나하나가 각자의 pane에 뜹니다.
-  `winget install --id marlocarlo.psmux`로 설치합니다. `settings.json`에는 아무것도 쓰지 않고,
-  절차서가 [`profiles/agent-teams.json`](profiles/agent-teams.json)
-  (`env.CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS`, `teammateMode`)을 병합하고 psmux 세션 안에서
-  `claude`를 띄우는 [`scripts/Start-ClaudeTeam.ps1`](scripts/Start-ClaudeTeam.ps1)을 설치합니다.
-  원하면 [`scripts/Install-ClaudeWrapper.ps1`](scripts/Install-ClaudeWrapper.ps1)로 그냥 `claude`만
-  쳐도 그렇게 뜨게 할 수 있고, `claude -p`, `claude mcp …` 같은 것은 계속 원래 바이너리로 갑니다
-  (`-Uninstall`로 되돌림). Anthropic이 지원하지 않는 서드파티 경로이며, Claude Code 2.1.261 +
-  psmux 3.3.8에서 확인했습니다. 자세한 내용과 문제 해결:
-  [`docs/agent-teams-windows.md`](docs/agent-teams-windows.md).
 
-앞의 둘은 설정 병합보다 **먼저** 실행됩니다. 그래야 그들이 쓴 키가 병합 과정에서 그대로 보존됩니다.
+이 둘은 설정 병합보다 **먼저** 실행됩니다. 그래야 그들이 쓴 키가 병합 과정에서 그대로 보존됩니다.
 
 ## 하지 않는 일
 
@@ -89,16 +78,12 @@ Claude가 현재 환경을 읽고, 어떤 프로필을 쓸지 묻고, 키 단위
 - [`prompts/bootstrap.md`](prompts/bootstrap.md) — Claude가 따르는 절차
 - [`docs/keys.md`](docs/keys.md) — 모든 키의 문서화 여부와 출처
 - [`docs/merge-rules.md`](docs/merge-rules.md) — 병합 알고리즘과 실제 예시
-- [`docs/agent-teams-windows.md`](docs/agent-teams-windows.md) — psmux로 네이티브 Windows에서
-  에이전트 팀을 분할 pane으로 띄우기: Claude Code의 판단 조건, 런처, 스모크 테스트, 실패 증상별 처방
-  (영문)
 - [`docs/troubleshooting.md`](docs/troubleshooting.md)
 
 ## 지원 플랫폼
 
 Windows(PowerShell)에서 확인했습니다. macOS와 Linux 경로도 절차서에 들어 있고, 실제 설치는 세 OS를
-모두 지원하는 업스트림 인스톨러에 맡깁니다. 에이전트 팀 단계는 Windows 전용이고, macOS와 Linux에서는
-같은 설정 조각이 일반 tmux와 그대로 동작합니다.
+모두 지원하는 업스트림 인스톨러에 맡깁니다.
 
 ## 라이선스
 

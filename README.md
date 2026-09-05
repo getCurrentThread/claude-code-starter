@@ -60,27 +60,16 @@ what it costs you.
 
 ## Optional components
 
-All three are opt-in, and each is installed by its own official installer or package manager. No
-third-party code is vendored here.
+Both are opt-in, and both are installed by their own official installers. No third-party code is
+vendored here.
 
 - **[CC-statusline](https://github.com/AwesomeJun/CC-statusline)** (MIT) — status line with context
   usage, cost, and reasoning effort. Owns the `statusLine` key.
 - **[RTK](https://github.com/rtk-ai/rtk)** (Apache-2.0) — a `PreToolUse` hook that compresses shell
   output before it reaches the context. Owns the `hooks` key. `rtk init -g` also appends an
   `@RTK.md` import to your global `CLAUDE.md`, which the bootstrap tells you before it runs.
-- **[psmux](https://github.com/psmux/psmux)** (MIT) — Windows only. A tmux-compatible multiplexer
-  written in Rust, no WSL, so agent teams open each teammate in its own pane instead of in-process.
-  Installed with `winget install --id marlocarlo.psmux`. It writes nothing to `settings.json`; the
-  bootstrap merges [`profiles/agent-teams.json`](profiles/agent-teams.json)
-  (`env.CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS`, `teammateMode`) and installs
-  [`scripts/Start-ClaudeTeam.ps1`](scripts/Start-ClaudeTeam.ps1), which starts `claude` inside a
-  psmux session. Optionally, [`scripts/Install-ClaudeWrapper.ps1`](scripts/Install-ClaudeWrapper.ps1)
-  makes a plain `claude` do that by itself while `claude -p`, `claude mcp …` and friends keep
-  running the real binary (reversible with `-Uninstall`). Third-party path, not supported by
-  Anthropic; verified with Claude Code 2.1.261 and psmux 3.3.8. Details and troubleshooting:
-  [`docs/agent-teams-windows.md`](docs/agent-teams-windows.md).
 
-The first two run *before* the settings merge, so whatever they write survives it untouched.
+They run *before* the settings merge, so whatever they write survives it untouched.
 
 ## What it will not do
 
@@ -98,15 +87,12 @@ bootstrap prints the exact command for your OS when it finishes.
 - [`prompts/bootstrap.md`](prompts/bootstrap.md) — the procedure Claude follows
 - [`docs/keys.md`](docs/keys.md) — every key, documented or not, with sources
 - [`docs/merge-rules.md`](docs/merge-rules.md) — merge algorithm and worked examples
-- [`docs/agent-teams-windows.md`](docs/agent-teams-windows.md) — agent teams in split panes on
-  native Windows with psmux: how Claude Code decides, launcher, smoke test, failure signatures
 - [`docs/troubleshooting.md`](docs/troubleshooting.md)
 
 ## Platform support
 
 Verified on Windows (PowerShell). macOS and Linux paths are covered in the procedure and delegated
-to the upstream installers, which support all three. The agent-teams step is Windows-specific; on
-macOS and Linux the same settings fragment works with a regular tmux.
+to the upstream installers, which support all three.
 
 ## License
 
