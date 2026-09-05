@@ -17,6 +17,10 @@ for each top-level key K in chosen_profile:
 
 for each extras key the user approved:
     same rule
+
+if the agent-teams step (4c) was accepted:
+    merge profiles/agent-teams.json with the same rule
+    # its "env" sub-key is merged one level deep, so your other env entries survive
 ```
 
 Three properties follow, and they are the whole point:

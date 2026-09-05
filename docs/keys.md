@@ -3,8 +3,8 @@
 Two tiers. **Core** keys appear in the official settings reference. **Extras** do not — they are
 written by Claude Code's own `/config` UI, they work today, and they are undocumented.
 
-Checked against the official docs on **2026-08-22**. If you are reading this much later, re-check
-the links before trusting the "documented" column.
+Checked against the official docs on **2026-08-22** (agent-teams rows: **2026-09-05**). If you are
+reading this much later, re-check the links before trusting the "documented" column.
 
 ## Core keys
 
@@ -54,6 +54,17 @@ Off by default. The bootstrap asks separately, and tells you they are undocument
 | `inputNeededNotifEnabled` | `true` | **no** | Notifies you when a session is blocked on your input. | None. |
 | `skipDangerousModePermissionPrompt` | `true` | **no** | Removes the startup confirmation shown for bypass mode. | Only offered with the `power` profile. It removes the last speed bump in front of a mode the docs say to confine to containers and VMs. |
 
+## Agent teams fragment (opt-in, bootstrap step 4c)
+
+Applied only if you accept the psmux step. Both keys are documented; the feature itself is a
+research preview and the split-pane path on Windows is third-party (see
+[agent-teams-windows.md](agent-teams-windows.md)).
+
+| Key | Value | Documented | Source | Notes |
+|---|---|---|---|---|
+| `env.CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS` | `"1"` | yes | [agent-teams](https://code.claude.com/docs/en/agent-teams) | Enables agent teams. While it is `1`, any subagent Claude names becomes a teammate, so teams can form without being asked. Set to `"0"` to turn off; Claude Code reapplies settings-file `env` values without a restart. Merged one level deep, so other `env` entries are kept. |
+| `teammateMode` | `"tmux"` | yes | [settings-reference](https://code.claude.com/docs/en/settings-reference#teammatemode) | How teammates display. `"in-process"` (default since v2.1.179), `"auto"` (panes only when already inside tmux or iTerm2), `"tmux"`, `"iterm2"`. The fragment picks `"tmux"` so a missing multiplexer fails loudly instead of silently degrading; change it to `"auto"` if you also run `claude` outside psmux. Teammates inherit the lead's `permissions.defaultMode`. |
+
 ## Keys this repo deliberately does **not** write
 
 | Key | Why not |
@@ -62,4 +73,4 @@ Off by default. The bootstrap asks separately, and tells you they are undocument
 | `statusLine` | Owned by the CC-statusline installer, which also picks the script path for your OS. |
 | `theme`, `tui` | Cosmetic and UI-managed. Set them with `/config` — it takes two seconds and no config file needs to change. |
 | `permissions.allow` / `deny` / `ask` | Allowlists are project-specific. A generic list either does nothing useful or grants too much. |
-| `env` | Environment variables are personal. The merge rules handle an existing `env` block correctly, but no profile adds one. |
+| `env` | Environment variables are personal. The merge rules handle an existing `env` block correctly, and no core profile adds one. The single exception is the opt-in agent-teams fragment above, which adds one sub-key and leaves the rest of your `env` alone. |

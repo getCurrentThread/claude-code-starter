@@ -58,6 +58,14 @@ Either your organization disabled it (`permissions.disableBypassPermissionsMode`
 the actions no mode auto-approves. See
 [permission modes](https://code.claude.com/docs/en/permission-modes).
 
+## Teammates run in-process instead of opening split panes (Windows)
+
+Three things must all hold: `teammateMode` is `"tmux"` (or `"auto"`) in `settings.json`, `claude`
+was started *inside* a psmux session, and `tmux -V` resolves in that pane. Check them in that
+order, then read [agent-teams-windows.md](agent-teams-windows.md) — its troubleshooting table maps
+each debug-log signature to a fix. Start Claude with `--debug-file "$env:TEMP\claude_debug.log"`
+and look for `TeammateModeSnapshot` and `BackendRegistry` lines.
+
 ## An extras key stopped working after an update
 
 Expected. Extras are undocumented `/config`-managed keys and can change between versions. Remove the
