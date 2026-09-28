@@ -19,7 +19,7 @@ Respond in the user's language.
 
 ```json
 {
-  "permissions": { "defaultMode": "bypassPermissions" },
+  "permissions": { "defaultMode": "bypassPermissions", "disableAutoMode": "disable" },
   "model": "opus",
   "effortLevel": "xhigh",
   "modelSettings": {
@@ -60,7 +60,26 @@ The installer rewrites `settings.json` itself. Read back **only** its `statusLin
 it into the merge; ignore the rest of what it wrote (on Windows PowerShell 5.1 it can mangle
 non-ASCII text). If the installer fails, continue without a status line and say so in the report.
 
-## Step 3 — Merge and write
+## Step 3 — Stay-in-bypass hook
+
+Shift+Tab can still move a session to Manual or Accept Edits. This `PermissionRequest` hook fires
+when such a session is about to show a permission prompt, allows the request, and switches the
+session back to `bypassPermissions`. It leaves plan mode, `AskUserQuestion`, and `ExitPlanMode` alone.
+
+Download the script for the OS into `<config-dir>/hooks/` (create the folder if needed; overwrite
+an older copy):
+
+- Windows: `https://raw.githubusercontent.com/getCurrentThread/claude-code-starter/main/hooks/stay-bypass.ps1`
+- macOS/Linux: `https://raw.githubusercontent.com/getCurrentThread/claude-code-starter/main/hooks/stay-bypass.sh`
+
+Its hook command, using the script's absolute path with forward slashes:
+
+- Windows: `powershell.exe -NoProfile -ExecutionPolicy Bypass -File "<config-dir>/hooks/stay-bypass.ps1"`
+- macOS/Linux: `sh "<config-dir>/hooks/stay-bypass.sh"`
+
+If the download fails, skip the hook and say so in the report.
+
+## Step 4 — Merge and write
 
 ```
 result = the settings parsed in Step 1
@@ -68,7 +87,13 @@ for each top-level key K in the settings above:
     if K is "permissions" or "modelSettings": set only the sub-keys listed; keep all other sub-keys
     else: result[K] = value
 if Step 2 installed a status line: result.statusLine = the installer's value
+if Step 3 downloaded the hook and no handler in result.hooks.PermissionRequest
+   has a command containing "stay-bypass":
+    append to result.hooks.PermissionRequest (create the arrays if missing):
+        { "matcher": "*", "hooks": [ { "type": "command", "command": "<hook command>" } ] }
 ```
+
+Existing hooks are never removed or reordered.
 
 Serialize with 2-space indent, parse it back to confirm it is valid, and write it as **UTF-8
 without BOM**. On Windows, do not use `Set-Content` or `>`; use:
@@ -77,7 +102,7 @@ without BOM**. On Windows, do not use `Set-Content` or `>`; use:
 [System.IO.File]::WriteAllText($path, $json, (New-Object System.Text.UTF8Encoding $false))
 ```
 
-## Step 4 — Report
+## Step 5 — Report
 
 Re-read the file, confirm it parses and holds every value above. Then tell the user:
 

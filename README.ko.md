@@ -26,6 +26,7 @@ Claude가 `settings.json`을 백업하고, 아래 설정을 병합하고, 상태
 | 키 | 값 |
 |---|---|
 | `permissions.defaultMode` | `bypassPermissions` — 권한 확인 없음 |
+| `permissions.disableAutoMode` | `disable` — Shift+Tab 순환에서 auto 모드 제거 |
 | `skipDangerousModePermissionPrompt` | `true` — bypass 모드 시작 확인창 없음 |
 | `model` | `opus` |
 | `effortLevel` / `ultracode` | `xhigh` / `true` |
@@ -35,7 +36,11 @@ Claude가 `settings.json`을 백업하고, 아래 설정을 병합하고, 상태
 | `remoteControlAtStartup`, `agentPushNotifEnabled`, `inputNeededNotifEnabled` | `true` |
 | `attribution` | 빈 값 — 커밋·PR에 Claude 서명 없음 |
 
-여기에 [CC-statusline](https://github.com/AwesomeJun/CC-statusline)을 `m` 크기로 설치합니다.
+여기에 `PermissionRequest` 훅 [`hooks/stay-bypass`](hooks/)를 넣습니다. Shift+Tab으로 Manual이나
+Accept Edits로 넘어가도, 권한 확인 창이 처음 뜨려는 순간 그 요청을 허용하고 bypass 모드로 되돌립니다.
+plan 모드는 건드리지 않습니다.
+
+그리고 [CC-statusline](https://github.com/AwesomeJun/CC-statusline)을 `m` 크기로 설치합니다.
 이미 `statusLine`이 있으면 그대로 둡니다.
 
 표에 없는 키는 그대로 남고, 파싱되지 않는 `settings.json`은 건드리지 않습니다.

@@ -27,6 +27,7 @@ reports what changed. It does not ask you anything along the way.
 | Key | Value |
 |---|---|
 | `permissions.defaultMode` | `bypassPermissions` — no permission prompts |
+| `permissions.disableAutoMode` | `disable` — auto mode leaves the Shift+Tab cycle |
 | `skipDangerousModePermissionPrompt` | `true` — no startup confirmation for bypass mode |
 | `model` | `opus` |
 | `effortLevel` / `ultracode` | `xhigh` / `true` |
@@ -36,7 +37,11 @@ reports what changed. It does not ask you anything along the way.
 | `remoteControlAtStartup`, `agentPushNotifEnabled`, `inputNeededNotifEnabled` | `true` |
 | `attribution` | empty — no Claude signature in commits or PRs |
 
-Plus [CC-statusline](https://github.com/AwesomeJun/CC-statusline) at size `m`, unless you already
+Plus a `PermissionRequest` hook, [`hooks/stay-bypass`](hooks/), that sends a session back to bypass
+mode if you Shift+Tab into Manual or Accept Edits: the first time a permission prompt would appear,
+it allows the request and switches the mode back. Plan mode is left alone.
+
+And [CC-statusline](https://github.com/AwesomeJun/CC-statusline) at size `m`, unless you already
 have a `statusLine` — then yours is left alone.
 
 Keys not in this table are kept as they are, and a `settings.json` that does not parse is left
