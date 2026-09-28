@@ -19,7 +19,7 @@ Respond in the user's language.
 
 ```json
 {
-  "permissions": { "defaultMode": "bypassPermissions", "disableAutoMode": "disable" },
+  "permissions": { "defaultMode": "bypassPermissions" },
   "model": "opus",
   "effortLevel": "xhigh",
   "modelSettings": {
@@ -62,9 +62,10 @@ non-ASCII text). If the installer fails, continue without a status line and say 
 
 ## Step 3 — Stay-in-bypass hook
 
-Shift+Tab can still move a session to Manual or Accept Edits. This `PermissionRequest` hook fires
-when such a session is about to show a permission prompt, allows the request, and switches the
-session back to `bypassPermissions`. It leaves plan mode, `AskUserQuestion`, and `ExitPlanMode` alone.
+Shift+Tab can still move a session to Manual, Accept Edits, or Auto. This hook sends it back: on the
+next tool call it raises a permission request, allows it, and switches the session to
+`bypassPermissions`. It leaves plan mode, subagents, and the plan/question tools alone, and backs off
+for the session if the switch does not take.
 
 Download the script for the OS into `<config-dir>/hooks/` (create the folder if needed; overwrite
 an older copy):
@@ -87,10 +88,11 @@ for each top-level key K in the settings above:
     if K is "permissions" or "modelSettings": set only the sub-keys listed; keep all other sub-keys
     else: result[K] = value
 if Step 2 installed a status line: result.statusLine = the installer's value
-if Step 3 downloaded the hook and no handler in result.hooks.PermissionRequest
-   has a command containing "stay-bypass":
-    append to result.hooks.PermissionRequest (create the arrays if missing):
-        { "matcher": "*", "hooks": [ { "type": "command", "command": "<hook command>" } ] }
+if Step 3 downloaded the hook:
+    for E in ("PreToolUse", "PermissionRequest"):
+        if no handler in result.hooks[E] has a command containing "stay-bypass":
+            append to result.hooks[E] (create the arrays if missing):
+                { "matcher": "*", "hooks": [ { "type": "command", "command": "<hook command>" } ] }
 ```
 
 Existing hooks are never removed or reordered.

@@ -26,7 +26,6 @@ Claude가 `settings.json`을 백업하고, 아래 설정을 병합하고, 상태
 | 키 | 값 |
 |---|---|
 | `permissions.defaultMode` | `bypassPermissions` — 권한 확인 없음 |
-| `permissions.disableAutoMode` | `disable` — Shift+Tab 순환에서 auto 모드 제거 |
 | `skipDangerousModePermissionPrompt` | `true` — bypass 모드 시작 확인창 없음 |
 | `model` | `opus` |
 | `effortLevel` / `ultracode` | `xhigh` / `true` |
@@ -36,9 +35,10 @@ Claude가 `settings.json`을 백업하고, 아래 설정을 병합하고, 상태
 | `remoteControlAtStartup`, `agentPushNotifEnabled`, `inputNeededNotifEnabled` | `true` |
 | `attribution` | 빈 값 — 커밋·PR에 Claude 서명 없음 |
 
-여기에 `PermissionRequest` 훅 [`hooks/stay-bypass`](hooks/)를 넣습니다. Shift+Tab으로 Manual이나
-Accept Edits로 넘어가도, 권한 확인 창이 처음 뜨려는 순간 그 요청을 허용하고 bypass 모드로 되돌립니다.
-plan 모드는 건드리지 않습니다.
+여기에 훅 [`hooks/stay-bypass`](hooks/)를 넣습니다. Shift+Tab으로 Manual, Accept Edits, Auto로
+넘어가도 다음 도구 호출에서 권한 요청을 일으켜 허용하고 bypass 모드로 되돌립니다. plan 모드와
+서브에이전트는 건드리지 않고, 정책으로 bypass가 막혀 있는 등 전환이 안 되면 그 세션에서는 다시
+시도하지 않고 물러납니다.
 
 그리고 [CC-statusline](https://github.com/AwesomeJun/CC-statusline)을 `m` 크기로 설치합니다.
 이미 `statusLine`이 있으면 그대로 둡니다.
@@ -62,10 +62,6 @@ Copy-Item "$env:USERPROFILE\.claude\settings.json.bak-<타임스탬프>" "$env:U
 cp ~/.claude/settings.json.bak-<타임스탬프> ~/.claude/settings.json
 ```
 
-## v0.1.0에서 올라오는 경우
-
-RTK는 더 이상 설치하지 않습니다. 이미 설치된 RTK는 그대로 둡니다. 지우려면 `settings.json`의
-`hooks`에서 RTK의 `PreToolUse` 항목을, 전역 `CLAUDE.md`에서 `@RTK.md` 줄을 삭제하세요.
 
 ## 라이선스
 

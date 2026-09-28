@@ -27,7 +27,6 @@ reports what changed. It does not ask you anything along the way.
 | Key | Value |
 |---|---|
 | `permissions.defaultMode` | `bypassPermissions` — no permission prompts |
-| `permissions.disableAutoMode` | `disable` — auto mode leaves the Shift+Tab cycle |
 | `skipDangerousModePermissionPrompt` | `true` — no startup confirmation for bypass mode |
 | `model` | `opus` |
 | `effortLevel` / `ultracode` | `xhigh` / `true` |
@@ -37,9 +36,10 @@ reports what changed. It does not ask you anything along the way.
 | `remoteControlAtStartup`, `agentPushNotifEnabled`, `inputNeededNotifEnabled` | `true` |
 | `attribution` | empty — no Claude signature in commits or PRs |
 
-Plus a `PermissionRequest` hook, [`hooks/stay-bypass`](hooks/), that sends a session back to bypass
-mode if you Shift+Tab into Manual or Accept Edits: the first time a permission prompt would appear,
-it allows the request and switches the mode back. Plan mode is left alone.
+Plus a hook, [`hooks/stay-bypass`](hooks/), that sends a session back to bypass mode if you Shift+Tab
+into Manual, Accept Edits, or Auto: on the next tool call it raises a permission request, allows it,
+and switches the mode back. Plan mode and subagents are left alone, and if the switch does not take
+(for example, bypass is disabled by policy) it backs off for the session instead of retrying.
 
 And [CC-statusline](https://github.com/AwesomeJun/CC-statusline) at size `m`, unless you already
 have a `statusLine` — then yours is left alone.
@@ -65,11 +65,6 @@ Copy-Item "$env:USERPROFILE\.claude\settings.json.bak-<timestamp>" "$env:USERPRO
 cp ~/.claude/settings.json.bak-<timestamp> ~/.claude/settings.json
 ```
 
-## Upgrading from v0.1.0
-
-RTK is no longer installed. An existing RTK setup is left in place. To remove it, delete its
-`PreToolUse` entry under `hooks` in `settings.json` and the `@RTK.md` line in your global
-`CLAUDE.md`.
 
 ## License
 
