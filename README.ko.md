@@ -28,7 +28,7 @@ Claude가 `settings.json`을 백업하고, 아래 설정을 병합하고, 상태
 | `permissions.defaultMode` | `bypassPermissions` — 권한 확인 없음 |
 | `skipDangerousModePermissionPrompt` | `true` — bypass 모드 시작 확인창 없음 |
 | `model` | `opus` |
-| `effortLevel` / `ultracode` | `xhigh` / `true` |
+| `effortLevel` | `xhigh` |
 | `modelSettings` | `claude-opus-5-5`, `claude-sonnet-5-5`에 `xhigh` — 최상위 `effortLevel`은 Opus 5.5부터 적용되지 않음 |
 | `autoCompactEnabled` / `autoCompactWindow` | `true` / `400000` — 400K 토큰에서 자동 압축 |
 | `autoUpdatesChannel` | `latest` |
@@ -42,6 +42,10 @@ Claude가 `settings.json`을 백업하고, 아래 설정을 병합하고, 상태
 
 그리고 [CC-statusline](https://github.com/AwesomeJun/CC-statusline)을 `m` 크기로 설치합니다.
 이미 `statusLine`이 있으면 그대로 둡니다.
+
+또 전역 `CLAUDE.md` 끝에 `## Subagent rules` 섹션을 덧붙입니다. Agent 도구를 부를 때 항상
+`model`과 `effort`를 지정하고(`haiku`/`sonnet`만, `low`/`medium`/`high`), 포크는 쓰지 않는다는
+규칙입니다. 이미 섹션이 있으면 건너뛰고, 기존 내용은 고치지 않습니다.
 
 표에 없는 키는 그대로 남고, 파싱되지 않는 `settings.json`은 건드리지 않습니다.
 
@@ -61,6 +65,8 @@ Copy-Item "$env:USERPROFILE\.claude\settings.json.bak-<타임스탬프>" "$env:U
 ```bash
 cp ~/.claude/settings.json.bak-<타임스탬프> ~/.claude/settings.json
 ```
+
+`CLAUDE.md`가 이미 있었다면 같은 방식으로 `CLAUDE.md.bak-<타임스탬프>`에 백업합니다.
 
 
 ## 라이선스

@@ -26,7 +26,6 @@ Respond in the user's language.
     "claude-opus-5-5": { "effortLevel": "xhigh" },
     "claude-sonnet-5-5": { "effortLevel": "xhigh" }
   },
-  "ultracode": true,
   "autoCompactEnabled": true,
   "autoCompactWindow": 400000,
   "autoUpdatesChannel": "latest",
@@ -104,11 +103,35 @@ without BOM**. On Windows, do not use `Set-Content` or `>`; use:
 [System.IO.File]::WriteAllText($path, $json, (New-Object System.Text.UTF8Encoding $false))
 ```
 
-## Step 5 — Report
+## Step 5 — Subagent rules (CLAUDE.md)
+
+Target: `<config-dir>/CLAUDE.md`. Skip this step if the file already has a `## Subagent rules`
+heading. Otherwise, if the file exists, copy it to `CLAUDE.md.bak-<yyyyMMdd-HHmmss>`, then append
+the block below after a blank line. Never rewrite or reorder the existing text. If the file does not
+exist, create it with this block. Write as UTF-8 without BOM.
+
+```markdown
+## Subagent rules
+
+- Always set `model` and `effort` explicitly when calling the Agent tool.
+  Never use `opus`, `fable`, or `inherit`.
+- Model
+  - `haiku`: file/code search, log summaries, simple lookups
+  - `sonnet`: code edits, review, debugging, multi-step reasoning
+- Effort
+  - `low`: simple search or summary
+  - `medium`: general implementation or analysis (default)
+  - `high`: only for hard debugging or design decisions
+- Do not use forks (subagents that inherit the whole conversation).
+  Put the needed context in the prompt and send it to a regular subagent.
+```
+
+## Step 6 — Report
 
 Re-read the file, confirm it parses and holds every value above. Then tell the user:
 
 - The keys added or changed, with their old values.
+- Whether `CLAUDE.md` got the subagent rules or already had them, and its backup path if one was made.
 - The backup path, and the rollback command:
   - Windows: `Copy-Item "<backup>" "<settings.json>" -Force`
   - macOS/Linux: `cp "<backup>" "<settings.json>"`

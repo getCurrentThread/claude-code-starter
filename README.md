@@ -29,7 +29,7 @@ reports what changed. It does not ask you anything along the way.
 | `permissions.defaultMode` | `bypassPermissions` — no permission prompts |
 | `skipDangerousModePermissionPrompt` | `true` — no startup confirmation for bypass mode |
 | `model` | `opus` |
-| `effortLevel` / `ultracode` | `xhigh` / `true` |
+| `effortLevel` | `xhigh` |
 | `modelSettings` | `xhigh` for `claude-opus-5-5` and `claude-sonnet-5-5` — the top-level `effortLevel` does not reach Opus 5.5 and later |
 | `autoCompactEnabled` / `autoCompactWindow` | `true` / `400000` — compacts at 400K tokens |
 | `autoUpdatesChannel` | `latest` |
@@ -43,6 +43,10 @@ and switches the mode back. Plan mode and subagents are left alone, and if the s
 
 And [CC-statusline](https://github.com/AwesomeJun/CC-statusline) at size `m`, unless you already
 have a `statusLine` — then yours is left alone.
+
+And a `## Subagent rules` section appended to your global `CLAUDE.md`: always pass `model` and
+`effort` to the Agent tool (`haiku`/`sonnet` only, `low`/`medium`/`high`) and no forks. Skipped if
+the section is already there; your existing text is never rewritten.
 
 Keys not in this table are kept as they are, and a `settings.json` that does not parse is left
 untouched.
@@ -64,6 +68,8 @@ Copy-Item "$env:USERPROFILE\.claude\settings.json.bak-<timestamp>" "$env:USERPRO
 ```bash
 cp ~/.claude/settings.json.bak-<timestamp> ~/.claude/settings.json
 ```
+
+`CLAUDE.md` is backed up the same way, to `CLAUDE.md.bak-<timestamp>`, when it already existed.
 
 
 ## License
