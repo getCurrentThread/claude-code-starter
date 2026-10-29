@@ -35,6 +35,7 @@ reports what changed. It does not ask you anything along the way.
 | `autoUpdatesChannel` | `latest` |
 | `remoteControlAtStartup`, `agentPushNotifEnabled`, `inputNeededNotifEnabled` | `true` |
 | `attribution` | empty — no Claude signature in commits or PRs |
+| `env.CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS` | `"1"` — turns on agent teams (research preview); teammates are full Claude sessions and inherit bypass mode. Your other `env` keys are kept |
 
 Plus a hook, [`hooks/stay-bypass`](hooks/), that sends a session back to bypass mode if you Shift+Tab
 into Manual, Accept Edits, or Auto: on the next tool call it raises a permission request, allows it,
@@ -45,8 +46,9 @@ And [CC-statusline](https://github.com/AwesomeJun/CC-statusline) at size `m`, un
 have a `statusLine` — then yours is left alone.
 
 And a `## Subagent rules` section appended to your global `CLAUDE.md`: always pass `model` and
-`effort` to the Agent tool (`haiku`/`sonnet` only, `low`/`medium`/`high`) and no forks. Skipped if
-the section is already there; your existing text is never rewritten.
+`effort` to the Agent tool and Workflow `agent()` (`haiku`/`sonnet` only; `low`/`medium`/`high`,
+with `xhigh` only for long autonomous tasks or a re-run after `high` fell short) and no forks.
+Skipped if the section is already there; your existing text is never rewritten.
 
 Keys not in this table are kept as they are, and a `settings.json` that does not parse is left
 untouched.

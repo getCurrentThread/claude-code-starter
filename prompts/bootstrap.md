@@ -33,7 +33,8 @@ Respond in the user's language.
   "agentPushNotifEnabled": true,
   "inputNeededNotifEnabled": true,
   "skipDangerousModePermissionPrompt": true,
-  "attribution": { "commit": "", "pr": "", "sessionUrl": false }
+  "attribution": { "commit": "", "pr": "", "sessionUrl": false },
+  "env": { "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1" }
 }
 ```
 
@@ -84,7 +85,7 @@ If the download fails, skip the hook and say so in the report.
 ```
 result = the settings parsed in Step 1
 for each top-level key K in the settings above:
-    if K is "permissions" or "modelSettings": set only the sub-keys listed; keep all other sub-keys
+    if K is "permissions", "modelSettings", or "env": set only the sub-keys listed; keep all other sub-keys
     else: result[K] = value
 if Step 2 installed a status line: result.statusLine = the installer's value
 if Step 3 downloaded the hook:
@@ -113,15 +114,18 @@ exist, create it with this block. Write as UTF-8 without BOM.
 ```markdown
 ## Subagent rules
 
-- Always set `model` and `effort` explicitly when calling the Agent tool.
-  Never use `opus`, `fable`, or `inherit`.
+- Always set `model` and `effort` explicitly when calling the Agent tool or a Workflow `agent()`.
+  Omitting either, or passing `inherit`, falls back to the main loop's Opus/xhigh.
+  Never use `opus`, `fable`, or `max`.
 - Model
   - `haiku`: file/code search, log summaries, simple lookups
   - `sonnet`: code edits, review, debugging, multi-step reasoning
 - Effort
   - `low`: simple search or summary
-  - `medium`: general implementation or analysis (default)
-  - `high`: only for hard debugging or design decisions
+  - `medium`: read-only review, research, or planning (default)
+  - `high`: anything that edits files, debugs, or runs commands with side effects
+  - `xhigh`: only for a long autonomous task (roughly 30+ minutes, e.g. a whole feature) or a re-run
+    after a `high` result fell short
 - Do not use forks (subagents that inherit the whole conversation).
   Put the needed context in the prompt and send it to a regular subagent.
 ```
