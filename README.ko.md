@@ -34,6 +34,7 @@ Claude가 `settings.json`을 백업하고, 아래 설정을 병합하고, 상태
 | `autoUpdatesChannel` | `latest` |
 | `remoteControlAtStartup`, `agentPushNotifEnabled`, `inputNeededNotifEnabled` | `true` |
 | `attribution` | 빈 값 — 커밋·PR에 Claude 서명 없음 |
+| `env.CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS` | `"1"` — 에이전트 팀 켜기(리서치 프리뷰). 팀원은 각각 독립된 Claude 세션이고 bypass 모드를 물려받음. 기존 `env` 키는 유지 |
 
 여기에 훅 [`hooks/stay-bypass`](hooks/)를 넣습니다. Shift+Tab으로 Manual, Accept Edits, Auto로
 넘어가도 다음 도구 호출에서 권한 요청을 일으켜 허용하고 bypass 모드로 되돌립니다. plan 모드와
@@ -43,9 +44,10 @@ Claude가 `settings.json`을 백업하고, 아래 설정을 병합하고, 상태
 그리고 [CC-statusline](https://github.com/AwesomeJun/CC-statusline)을 `m` 크기로 설치합니다.
 이미 `statusLine`이 있으면 그대로 둡니다.
 
-또 전역 `CLAUDE.md` 끝에 `## Subagent rules` 섹션을 덧붙입니다. Agent 도구를 부를 때 항상
-`model`과 `effort`를 지정하고(`haiku`/`sonnet`만, `low`/`medium`/`high`), 포크는 쓰지 않는다는
-규칙입니다. 이미 섹션이 있으면 건너뛰고, 기존 내용은 고치지 않습니다.
+또 전역 `CLAUDE.md` 끝에 `## Subagent rules` 섹션을 덧붙입니다. Agent 도구나 Workflow `agent()`를
+부를 때 항상 `model`과 `effort`를 지정하고(`haiku`/`sonnet`만, `low`/`medium`/`high`, `xhigh`는 오래
+혼자 도는 작업이나 `high` 결과가 부족해 다시 돌릴 때만), 포크는 쓰지 않는다는 규칙입니다. 이미 섹션이
+있으면 건너뛰고, 기존 내용은 고치지 않습니다.
 
 표에 없는 키는 그대로 남고, 파싱되지 않는 `settings.json`은 건드리지 않습니다.
 
