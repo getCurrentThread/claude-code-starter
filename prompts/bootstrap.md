@@ -116,7 +116,8 @@ exist, create it with this block. Write as UTF-8 without BOM.
 
 - Always set `model` and `effort` explicitly when calling the Agent tool or a Workflow `agent()`.
   Omitting either, or passing `inherit`, falls back to the main loop's Opus/xhigh.
-  Never use `opus`, `fable`, or `max`.
+  Never use `fable` or `max`. Use `opus` only at `medium`, and only to re-run a task whose
+  `sonnet`/`high` result fell short.
 - Model
   - `haiku`: file/code search, log summaries, simple lookups
   - `sonnet`: code edits, review, debugging, multi-step reasoning
@@ -124,8 +125,7 @@ exist, create it with this block. Write as UTF-8 without BOM.
   - `low`: simple search or summary
   - `medium`: read-only review, research, or planning (default)
   - `high`: anything that edits files, debugs, or runs commands with side effects
-  - `xhigh`: only for a long autonomous task (roughly 30+ minutes, e.g. a whole feature) or a re-run
-    after a `high` result fell short
+  - `xhigh`: only for a long autonomous task (roughly 30+ minutes, e.g. a whole feature)
 - Do not use forks (subagents that inherit the whole conversation).
   Put the needed context in the prompt and send it to a regular subagent.
 ```

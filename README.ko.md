@@ -45,9 +45,9 @@ Claude가 `settings.json`을 백업하고, 아래 설정을 병합하고, 상태
 이미 `statusLine`이 있으면 그대로 둡니다.
 
 또 전역 `CLAUDE.md` 끝에 `## Subagent rules` 섹션을 덧붙입니다. Agent 도구나 Workflow `agent()`를
-부를 때 항상 `model`과 `effort`를 지정하고(`haiku`/`sonnet`만, `low`/`medium`/`high`, `xhigh`는 오래
-혼자 도는 작업이나 `high` 결과가 부족해 다시 돌릴 때만), 포크는 쓰지 않는다는 규칙입니다. 이미 섹션이
-있으면 건너뛰고, 기존 내용은 고치지 않습니다.
+부를 때 항상 `model`과 `effort`를 지정하고(`haiku`/`sonnet`을 쓰되 `sonnet`/`high` 결과가 부족해 다시
+돌릴 때만 `opus`를 `medium`으로, `low`/`medium`/`high`를 쓰되 `xhigh`는 오래 혼자 도는 작업에만), 포크는
+쓰지 않는다는 규칙입니다. 이미 섹션이 있으면 건너뛰고, 기존 내용은 고치지 않습니다.
 
 표에 없는 키는 그대로 남고, 파싱되지 않는 `settings.json`은 건드리지 않습니다.
 
