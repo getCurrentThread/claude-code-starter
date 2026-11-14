@@ -36,12 +36,7 @@ Claude가 `settings.json`을 백업하고, 아래 설정을 병합하고, 상태
 | `attribution` | 빈 값 — 커밋·PR에 Claude 서명 없음 |
 | `env.CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS` | `"1"` — 에이전트 팀 켜기(리서치 프리뷰). 팀원은 각각 독립된 Claude 세션이고 bypass 모드를 물려받음. 기존 `env` 키는 유지 |
 
-여기에 훅 [`hooks/stay-bypass`](hooks/)를 넣습니다. Shift+Tab으로 Manual, Accept Edits, Auto로
-넘어가도 다음 도구 호출에서 권한 요청을 일으켜 허용하고 bypass 모드로 되돌립니다. plan 모드와
-서브에이전트는 건드리지 않고, 정책으로 bypass가 막혀 있는 등 전환이 안 되면 그 세션에서는 다시
-시도하지 않고 물러납니다.
-
-그리고 [CC-statusline](https://github.com/AwesomeJun/CC-statusline)을 `m` 크기로 설치합니다.
+여기에 [CC-statusline](https://github.com/AwesomeJun/CC-statusline)을 `m` 크기로 설치합니다.
 이미 `statusLine`이 있으면 그대로 둡니다.
 
 또 전역 `CLAUDE.md` 끝에 `## Subagent rules` 섹션을 덧붙입니다. Agent 도구나 Workflow `agent()`를

@@ -37,12 +37,7 @@ reports what changed. It does not ask you anything along the way.
 | `attribution` | empty — no Claude signature in commits or PRs |
 | `env.CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS` | `"1"` — turns on agent teams (research preview); teammates are full Claude sessions and inherit bypass mode. Your other `env` keys are kept |
 
-Plus a hook, [`hooks/stay-bypass`](hooks/), that sends a session back to bypass mode if you Shift+Tab
-into Manual, Accept Edits, or Auto: on the next tool call it raises a permission request, allows it,
-and switches the mode back. Plan mode and subagents are left alone, and if the switch does not take
-(for example, bypass is disabled by policy) it backs off for the session instead of retrying.
-
-And [CC-statusline](https://github.com/AwesomeJun/CC-statusline) at size `m`, unless you already
+Plus [CC-statusline](https://github.com/AwesomeJun/CC-statusline) at size `m`, unless you already
 have a `statusLine` — then yours is left alone.
 
 And a `## Subagent rules` section appended to your global `CLAUDE.md`: always pass `model` and
