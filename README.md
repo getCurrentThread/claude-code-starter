@@ -42,8 +42,8 @@ have a `statusLine` — then yours is left alone.
 
 And a `## Subagent rules` section appended to your global `CLAUDE.md`: always pass `model` and
 `effort` to the Agent tool and Workflow `agent()` (`haiku`/`sonnet`, plus `opus` at `medium` only to
-re-run a task where `sonnet`/`high` fell short; `low`/`medium`/`high`, with `xhigh` only for long
-autonomous tasks) and no forks.
+re-run a task where `sonnet`/`high` fell short, or in place of `sonnet` when the main loop is Fable;
+`low`/`medium`/`high`, with `xhigh` only for long autonomous tasks) and no forks.
 Skipped if the section is already there; your existing text is never rewritten.
 
 Keys not in this table are kept as they are, and a `settings.json` that does not parse is left

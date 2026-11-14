@@ -88,9 +88,12 @@ exist, create it with this block. Write as UTF-8 without BOM.
 ## Subagent rules
 
 - Always set `model` and `effort` explicitly when calling the Agent tool or a Workflow `agent()`.
-  Omitting either, or passing `inherit`, falls back to the main loop's Opus/xhigh.
-  Never use `fable` or `max`. Use `opus` only at `medium`, and only to re-run a task whose
-  `sonnet`/`high` result fell short.
+  Omitting either, or passing `inherit`, falls back to the main loop's model and effort.
+  Never use `fable` or `max`.
+- When the main loop model is Fable, use `opus` at `medium` in place of `sonnet`;
+  `haiku` tasks stay on `haiku` with the effort from the list below.
+- Otherwise use `opus` only at `medium`, and only to re-run a task whose `sonnet`/`high` result
+  fell short.
 - Model
   - `haiku`: file/code search, log summaries, simple lookups
   - `sonnet`: code edits, review, debugging, multi-step reasoning
