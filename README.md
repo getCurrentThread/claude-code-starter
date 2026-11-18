@@ -37,7 +37,7 @@ reports what changed. It does not ask you anything along the way.
 | `attribution` | empty — no Claude signature in commits or PRs |
 | `env.CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS` | `"1"` — turns on agent teams (research preview); teammates are full Claude sessions and inherit bypass mode. Your other `env` keys are kept |
 
-Plus [CC-statusline](https://github.com/AwesomeJun/CC-statusline) at size `m`, unless you already
+Plus [claude-statusline](https://github.com/awesomezun/claude-statusline) at size `m`, unless you already
 have a `statusLine` — then yours is left alone.
 
 And a `## Subagent rules` section appended to your global `CLAUDE.md`: always pass `model` and

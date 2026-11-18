@@ -47,14 +47,27 @@ Respond in the user's language.
 - If it exists, copy it to `settings.json.bak-<yyyyMMdd-HHmmss>` **now**, before anything else
   writes to it. Everything below merges from this parsed copy.
 
-## Step 2 — Status line (CC-statusline, size `m`)
+## Step 2 — Status line (claude-statusline, size `m`)
 
 Skip this step if the current settings already have a `statusLine` key — leave it exactly as it is.
 
 Otherwise run the upstream installer with the `m` preset:
 
-- Windows: `& ([scriptblock]::Create((irm https://raw.githubusercontent.com/AwesomeJun/CC-statusline/main/install.ps1))) m`
-- macOS/Linux: `curl -fsSL https://raw.githubusercontent.com/AwesomeJun/CC-statusline/main/install.sh | bash -s -- m`
+- Windows:
+
+  ```powershell
+  $src = irm https://raw.githubusercontent.com/awesomezun/claude-statusline/main/install.ps1
+  & ([scriptblock]::Create($src.TrimStart([char]0xFEFF))) m
+  ```
+
+- macOS/Linux: `curl -fsSL https://raw.githubusercontent.com/awesomezun/claude-statusline/main/install.sh | bash -s -- m`
+
+On Windows, run the installer as text, never as a file (`& .\install.ps1`). Windows PowerShell 5.1
+reads a `.ps1` file without a BOM in the system code page (CP949 on Korean Windows), and the
+installer's Korean text then fails to parse. If you save it to read it first, run that same text:
+read it as UTF-8 (`[System.IO.File]::ReadAllText($path, (New-Object System.Text.UTF8Encoding $false))`)
+and pass it through the same `TrimStart` and `[scriptblock]::Create`. Keep the `TrimStart`: `irm`
+keeps a BOM as a leading U+FEFF, and the installer's `param` block would then drop the `m` preset.
 
 The installer rewrites `settings.json` itself. Read back **only** its `statusLine` value and carry
 it into the merge; ignore the rest of what it wrote (on Windows PowerShell 5.1 it can mangle

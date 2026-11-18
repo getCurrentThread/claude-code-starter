@@ -36,7 +36,7 @@ Claude가 `settings.json`을 백업하고, 아래 설정을 병합하고, 상태
 | `attribution` | 빈 값 — 커밋·PR에 Claude 서명 없음 |
 | `env.CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS` | `"1"` — 에이전트 팀 켜기(리서치 프리뷰). 팀원은 각각 독립된 Claude 세션이고 bypass 모드를 물려받음. 기존 `env` 키는 유지 |
 
-여기에 [CC-statusline](https://github.com/AwesomeJun/CC-statusline)을 `m` 크기로 설치합니다.
+여기에 [claude-statusline](https://github.com/awesomezun/claude-statusline)을 `m` 크기로 설치합니다.
 이미 `statusLine`이 있으면 그대로 둡니다.
 
 또 전역 `CLAUDE.md` 끝에 `## Subagent rules` 섹션을 덧붙입니다. Agent 도구나 Workflow `agent()`를
